@@ -148,9 +148,14 @@ message ExpandCommentBranchRequest {
     int32 N = 2; 
 }
 
+message CommentWithReplies {
+    Comment comment = 1;
+    repeated Comment replies = 2;
+}
+
 message ExpandCommentBranchResponse {
     // top n comments with top n replies
-    repeated Comment comments = 1;
+    repeated CommentWithReplies comments_with_replies = 1;
 }
 
 

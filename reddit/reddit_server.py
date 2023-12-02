@@ -239,18 +239,23 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
 
         # sort them in desc order by score
         replies.sort(key=lambda c: c.score, reverse=True)
-        top_N_replies = replies[:N]
+        N = min(N, len(replies))
+        top_N_replies = []
 
         # For each top reply, find and sort its replies
-        for reply in top_N_replies:
+        for reply in replies[:N]:
             sub_replies = [
                 c for c in comments.values() if c.parent_comment_id == reply.id
             ]
             sub_replies.sort(key=lambda c: c.score, reverse=True)
             top_N_sub_replies = sub_replies[:N]
-            reply.replies.extend(top_N_sub_replies)
+            top_N_replies.append(
+                reddit_pb2.CommentWithReplies(comment=reply, replies=top_N_sub_replies)
+            )
 
-        return reddit_pb2.ExpandCommentBranchResponse(comments=top_direct_replies)
+        return reddit_pb2.ExpandCommentBranchResponse(
+            comments_with_replies=top_N_replies
+        )
 
 
 def serve():
