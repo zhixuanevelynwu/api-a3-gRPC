@@ -10,6 +10,7 @@ sys.path.insert(0, parent_dir)
 
 import reddit_pb2
 import reddit_server
+import db
 
 mock_post_id = "1010"
 
@@ -29,13 +30,13 @@ class TestVotePost(unittest.TestCase):
         mock_context.set_details = unittest.mock.Mock()
 
         # get old upvote count
-        old_upvote_count = reddit_server.posts[mock_post_id].score
+        old_upvote_count = db.posts[mock_post_id].score
 
         # upvote the post
         self.servicer.UpvotePost(request, mock_context)
 
         # check if the score is incremented
-        self.assertEqual(reddit_server.posts[mock_post_id].score, old_upvote_count + 1)
+        self.assertEqual(db.posts[mock_post_id].score, old_upvote_count + 1)
 
     # upvote non-existent post
     def test_upvote_nonexistent_post(self):
@@ -62,13 +63,13 @@ class TestVotePost(unittest.TestCase):
         mock_context.set_details = unittest.mock.Mock()
 
         # get old upvote count
-        old_upvote_count = reddit_server.posts[mock_post_id].score
+        old_upvote_count = db.posts[mock_post_id].score
 
         # downvote the post
         self.servicer.DownvotePost(request, mock_context)
 
         # check if the score is incremented
-        self.assertEqual(reddit_server.posts[mock_post_id].score, old_upvote_count - 1)
+        self.assertEqual(db.posts[mock_post_id].score, old_upvote_count - 1)
 
     # downvote non-existent post
     def test_downvote_nonexistent_post(self):

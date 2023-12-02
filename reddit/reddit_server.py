@@ -5,19 +5,7 @@ import reddit_pb2_grpc
 import uuid
 from datetime import datetime
 import threading
-
-# dummy data
-posts = {
-    "0011": reddit_pb2.Post(
-        id="0011",
-        title="Dummy Post Title",
-        content="Dummy Post Content",
-        image_url="./dummy.jpg",
-        user_id="user1",
-        publication_date="12/02/2023, 14:01:56",
-    )
-}
-comments = {}
+from db import posts, comments
 
 
 class RedditServicer(reddit_pb2_grpc.RedditService):

@@ -10,6 +10,7 @@ sys.path.insert(0, parent_dir)
 
 import reddit_pb2
 import reddit_server
+import db
 
 mock_post_id = "0011"
 mock_comment_id = "1100"
