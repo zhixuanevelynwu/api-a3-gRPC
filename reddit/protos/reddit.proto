@@ -43,23 +43,29 @@ message Comment {
     string id = 1;
 
     // the post or comment it is under
-    string parent_id = 2;
+    oneof parent {
+        string parent_post_id = 2;
+        string parent_comment_id = 3;
+    }
 
     // must have an author
-    string user_id = 3;
+    string user_id = 4;
+
+    // must have some text
+    string content = 5;
 
     // have a score
-    int32 score = 4;
+    int32 score = 6;
 
     // can be normal or hidden
     enum CommentState {
         NORMAL = 0;
         HIDDEN = 1;
     }
-    CommentState state = 5;
+    CommentState state = 7;
 
     // a publication date
-    string publication_date = 6;
+    string publication_date = 8;
 }
 
 message GetTopCommentsRequest {

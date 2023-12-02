@@ -7,13 +7,23 @@ from datetime import datetime
 import threading
 
 # dummy data
-posts = {}
+posts = {
+    "0011": reddit_pb2.Post(
+        id="0011",
+        title="Dummy Post Title",
+        content="Dummy Post Content",
+        image_url="./dummy.jpg",
+        user_id="user1",
+        publication_date="12/02/2023, 14:01:56",
+    )
+}
 comments = {}
 
 
 class RedditServicer(reddit_pb2_grpc.RedditService):
     posts_lock = threading.Lock()
 
+    # create a new post
     def CreatePost(self, request, context):
         # create a unique post id
         post_id = str(uuid.uuid4())
@@ -52,6 +62,7 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
         posts[post_id] = new_post
         return new_post
 
+    # upvate an existing post
     def UpvotePost(self, request, context):
         post_id = request.id
         with self.posts_lock:
@@ -64,6 +75,7 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return reddit_pb2.Post()
 
+    # downvote an existing post
     def DownvotePost(self, request, context):
         post_id = request.id
         with self.posts_lock:
@@ -76,23 +88,80 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return reddit_pb2.Post()
 
-    """
-    rpc RetrievePostContent(Post) returns (Post);
-    rpc CreateComment(Comment) returns (Comment);
-    rpc UpvoteComment(Comment) returns (Comment);
-    rpc DownvoteComment(Comment) returns (Comment);
-    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
-    """
-
+    # retrieve an existing post
     def RetrievePostContent(self, request, context):
         post_id = request.id
         post = posts.get(post_id, None)
+
+        # post must exist
         if post:
             return post
         else:
             context.set_details("Post not found!")
             context.set_code(grpc.StatusCode.NOT_FOUND)
             return reddit_pb2.Post()
+
+    # create a new comment
+    def CreateComment(self, request, context):
+        # create a unique comment id
+        comment_id = str(uuid.uuid4())
+
+        # get data from request
+        user_id = request.user_id
+        content = request.content
+        parent_post_id = request.parent_post_id
+        parent_comment_id = request.parent_comment_id
+
+        # must haves
+        if content == "" or user_id == "":
+            context.set_details("Invalid comment!")
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            return reddit_pb2.Comment()
+
+        # must be under a post or a comment
+        if parent_post_id == "" and parent_comment_id == "":
+            context.set_details("Invalid comment!")
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            return reddit_pb2.Comment()
+
+        # the parent must already exist in our database
+        parent = None
+        if parent_post_id != "":
+            parent = posts.get(parent_post_id, None)
+        else:
+            parent = comments.get(parent_comment_id, None)
+        if not parent:
+            context.set_details("Parent not found!")
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            return reddit_pb2.Comment()
+
+        # all passed, get now time
+        now = datetime.now()
+        publication_date = now.strftime("%m/%d/%Y, %H:%M:%S")
+
+        # create comment object
+        new_comment = reddit_pb2.Comment(
+            id=comment_id,
+            user_id=user_id,
+            content=content,
+            score=0,  # initial score
+            state=reddit_pb2.Comment.CommentState.NORMAL,  # initial state
+            publication_date=publication_date,  # current time
+        )
+
+        # set parent id
+        if parent_post_id != "":
+            new_comment.parent_post_id = parent_post_id
+        else:
+            new_comment.parent_comment_id = parent_comment_id
+
+        comments[comment_id] = new_comment
+        return new_comment
+
+    """
+    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
+    """
+    # retrieve
 
 
 def serve():
