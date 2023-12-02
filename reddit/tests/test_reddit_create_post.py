@@ -24,7 +24,7 @@ class TestCreatePost(unittest.TestCase):
     # happy path
     def test_create_post(self, mock_uuid):
         # create mock request
-        mock_request = reddit_pb2.Post(
+        mock_request = reddit_pb2.CreatePostRequest(
             title="Test Post Title",
             content="Test Post Content",
             user_id="user1",
@@ -53,7 +53,7 @@ class TestCreatePost(unittest.TestCase):
     # create a invalid post
     def test_create_invalid_post(self):
         # create invalid mock request
-        mock_request = reddit_pb2.Post(
+        mock_request = reddit_pb2.CreatePostRequest(
             title="Test Post Title",
             image_url="./test.jpg",
             video_url="./test.mp4",

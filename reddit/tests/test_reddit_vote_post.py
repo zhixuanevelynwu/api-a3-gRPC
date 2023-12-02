@@ -22,7 +22,7 @@ class TestVotePost(unittest.TestCase):
     # happy path
     def test_upvote_post(self):
         # create mock request
-        request = reddit_pb2.Post(id=mock_post_id)
+        request = reddit_pb2.VotePostRequest(id=mock_post_id)
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -41,7 +41,7 @@ class TestVotePost(unittest.TestCase):
     # upvote non-existent post
     def test_upvote_nonexistent_post(self):
         # create mock request
-        request = reddit_pb2.Post(id="nonexistent")
+        request = reddit_pb2.VotePostRequest(id="nonexistent")
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -55,7 +55,7 @@ class TestVotePost(unittest.TestCase):
     # happy path
     def test_downvote_post(self):
         # create mock request
-        request = reddit_pb2.Post(id=mock_post_id)
+        request = reddit_pb2.VotePostRequest(id=mock_post_id)
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -74,7 +74,7 @@ class TestVotePost(unittest.TestCase):
     # downvote non-existent post
     def test_downvote_nonexistent_post(self):
         # create mock request
-        request = reddit_pb2.Post(id="nonexistent")
+        request = reddit_pb2.VotePostRequest(id="nonexistent")
 
         # create a mock context
         mock_context = unittest.mock.Mock()

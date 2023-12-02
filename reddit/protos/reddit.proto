@@ -1,4 +1,4 @@
-
+// python -m grpc_tools.protoc -I protos --python_out=. --grpc_python_out=. protos/reddit.proto
 syntax = "proto3";
 
 package reddit;
@@ -66,34 +66,75 @@ message Comment {
 
     // a publication date
     string publication_date = 8;
-}
 
-message GetTopCommentsRequest {
-    // the post to get the top comments for
-    string id = 1;
-}
-
-message RetrieveTopCommentsRequest {
-    int32 id = 1;
-    int32 limit = 2;
-}
-
-message RetrieveTopCommentsResponse {
-    repeated Comment comments = 1;
+    bool has_replies = 9;
 }
 
 
 service RedditService {
-    rpc CreatePost(Post) returns (Post);
-    rpc UpvotePost(Post) returns (Post);
-    rpc DownvotePost(Post) returns (Post);
-    rpc RetrievePostContent(Post) returns (Post);
-    rpc CreateComment(Comment) returns (Comment);
-    rpc UpvoteComment(Comment) returns (Comment);
-    rpc DownvoteComment(Comment) returns (Comment);
-    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
+    rpc CreatePost(CreatePostRequest) returns (Post);
+    rpc UpvotePost(VotePostRequest) returns (Post);
+    rpc DownvotePost(VotePostRequest) returns (Post);
+    rpc RetrievePostContent(RetrievePostRequest) returns (Post);
+    rpc CreateComment(CreateCommentRequest) returns (Comment);
+    rpc UpvoteComment(VoteCommentRequest) returns (Comment);
+    rpc DownvoteComment(VoteCommentRequest) returns (Comment);
+    rpc RetrieveTopNComments(RetrieveTopNCommentsRequest) returns (RetrieveTopNCommentsResponse);
 }
 
+message CreatePostRequest {
+    // title, some text, one of video or image url
+    string title = 1;
+    string content = 2;
+    oneof media {
+        string image_url = 3;
+        string video_url = 4;
+    }
+
+    // optional author
+    optional string user_id = 5;
+}
+
+message VotePostRequest {
+    // the post id
+    string id = 1;
+}
+
+message RetrievePostRequest {
+    // the post id
+    string id = 1;
+}
+
+message CreateCommentRequest {
+    // the post or comment it is under
+    oneof parent {
+        string parent_post_id = 1;
+        string parent_comment_id = 2;
+    }
+
+    // must have an author
+    string user_id = 3;
+
+    // must have some text
+    string content = 4;
+}
+
+message VoteCommentRequest {
+    // the comment id
+    string id = 1;
+}
+
+message RetrieveTopNCommentsRequest {
+    // post id to retrieve comments for
+    int32 id = 1;
+
+    // how many comments to retrieve
+    int32 N = 2;
+}
+
+message RetrieveTopNCommentsResponse {
+    repeated Comment comments = 1;
+}
 
 
 

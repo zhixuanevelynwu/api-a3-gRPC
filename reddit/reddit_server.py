@@ -179,6 +179,41 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return reddit_pb2.Comment()
 
+    # Retrieving a list of N most upvoted comments under a post, where N is a parameter to the call. The
+    # returned result should indicate whether there are replies under those comments.
+    def RetrieveTopNComments(self, request, context):
+        # get data from request
+        post_id = request.id
+        N = request.N
+        post = posts.get(post_id, None)
+
+        # must have post
+        if not post:
+            context.set_details("Post not found!")
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            return reddit_pb2.RetrieveTopCommentsResponse()
+
+        # get all comments under this post
+        all_comments_under_post = []
+        for comment in comments.values():
+            if comment.parent_post_id == post_id:
+                all_comments_under_post.append(comment)
+
+        # sort comments by score
+        all_comments_under_post.sort(key=lambda x: x.score, reverse=True)
+
+        # get top N comments, if there are less than N comments, return all
+        N = max(N, len(all_comments_under_post))
+        top_N_comments = all_comments_under_post[:N]
+
+        # indicate whether there are replies under those comments
+        for comment in top_N_comments:
+            for subcomment in comments.values():
+                if subcomment.parent_comment_id == comment.id:
+                    comment.has_replies = True
+                    break
+        return reddit_pb2.RetrieveTopCommentsResponse(comments=top_N_comments)
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

@@ -25,7 +25,7 @@ class TestCreateComment(unittest.TestCase):
     # happy path
     def test_create_comment(self, mock_uuid):
         # create mock request
-        mock_request = reddit_pb2.Comment(
+        mock_request = reddit_pb2.CreateCommentRequest(
             user_id="user0",
             parent_post_id=mock_post_id,
             content="Test Comment Content",
@@ -52,7 +52,7 @@ class TestCreateComment(unittest.TestCase):
     # create a comment with no content
     def test_create_invalid_comment_no_content(self):
         # create invalid mock request
-        mock_request = reddit_pb2.Comment(
+        mock_request = reddit_pb2.CreateCommentRequest(
             user_id="user0",
             parent_post_id=mock_post_id,
         )
@@ -69,7 +69,7 @@ class TestCreateComment(unittest.TestCase):
     # create a comment without valid parent
     def test_create_invalid_comment_no_parent(self):
         # create invalid mock request
-        mock_request = reddit_pb2.Comment(
+        mock_request = reddit_pb2.CreateCommentRequest(
             user_id="user0",
             parent_post_id="nonexistent",
             content="Test Comment Content",

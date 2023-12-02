@@ -27,10 +27,11 @@ for i in range(100):
         score=i,
         publication_date="12/02/2023, 14:01:56",
     )
+    # for testing purpose, give post0 100 comments
     comments[str(i)] = reddit_pb2.Comment(
         id=str(i),
         user_id=f"user{i}",
-        parent_post_id=str(i),
+        parent_post_id="0",
         content=f"Dummy Comment Content {i}",
         score=100 - i,
         state=reddit_pb2.Comment.CommentState.NORMAL,

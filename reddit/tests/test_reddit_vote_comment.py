@@ -22,7 +22,7 @@ class TestVoteComment(unittest.TestCase):
     # happy path
     def test_upvote_comment(self):
         # create mock request
-        request = reddit_pb2.Post(id=mock_comment_id)
+        request = reddit_pb2.VoteCommentRequest(id=mock_comment_id)
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -32,16 +32,15 @@ class TestVoteComment(unittest.TestCase):
         # get old upvote count
         old_upvote_count = db.comments[mock_comment_id].score
 
-        # upvote the post
         self.servicer.UpvoteComment(request, mock_context)
 
         # check if the score is incremented
         self.assertEqual(db.comments[mock_comment_id].score, old_upvote_count + 1)
 
-    # upvote non-existent post
+    # upvote non-existent comment
     def test_upvote_nonexistent_comment(self):
         # create mock request
-        request = reddit_pb2.Post(id="nonexistent")
+        request = reddit_pb2.VoteCommentRequest(id="nonexistent")
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -55,7 +54,7 @@ class TestVoteComment(unittest.TestCase):
     # happy path
     def test_downvote_post(self):
         # create mock request
-        request = reddit_pb2.Post(id=mock_comment_id)
+        request = reddit_pb2.VoteCommentRequest(id=mock_comment_id)
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -65,16 +64,15 @@ class TestVoteComment(unittest.TestCase):
         # get old upvote count
         old_upvote_count = db.comments[mock_comment_id].score
 
-        # downvote the post
         self.servicer.DownvoteComment(request, mock_context)
 
         # check if the score is incremented
         self.assertEqual(db.comments[mock_comment_id].score, old_upvote_count - 1)
 
-    # downvote non-existent post
+    # downvote non-existent comment
     def test_downvote_nonexistent_post(self):
         # create mock request
-        request = reddit_pb2.Post(id="nonexistent")
+        request = reddit_pb2.VoteCommentRequest(id="nonexistent")
 
         # create a mock context
         mock_context = unittest.mock.Mock()

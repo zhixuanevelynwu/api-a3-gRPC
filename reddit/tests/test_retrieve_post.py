@@ -22,7 +22,7 @@ class TestRetrievePostContent(unittest.TestCase):
     # happy path
     def test_retrieve_post_content(self):
         # create mock request
-        request = reddit_pb2.Post(id=mock_post_id)
+        request = reddit_pb2.RetrievePostRequest(id=mock_post_id)
 
         # create a mock context
         mock_context = unittest.mock.Mock()
@@ -39,7 +39,7 @@ class TestRetrievePostContent(unittest.TestCase):
     # upvote non-existent post
     def test_retrieve_nonexistent_post_content(self):
         # create mock request
-        request = reddit_pb2.Post(id="nonexistent")
+        request = reddit_pb2.RetrievePostRequest(id="nonexistent")
 
         # create a mock context
         mock_context = unittest.mock.Mock()
