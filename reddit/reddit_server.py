@@ -76,6 +76,24 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return reddit_pb2.Post()
 
+    """
+    rpc RetrievePostContent(Post) returns (Post);
+    rpc CreateComment(Comment) returns (Comment);
+    rpc UpvoteComment(Comment) returns (Comment);
+    rpc DownvoteComment(Comment) returns (Comment);
+    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
+    """
+
+    def RetrievePostContent(self, request, context):
+        post_id = request.id
+        post = posts.get(post_id, None)
+        if post:
+            return post
+        else:
+            context.set_details("Post not found!")
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            return reddit_pb2.Post()
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
