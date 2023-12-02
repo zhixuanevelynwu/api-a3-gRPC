@@ -38,7 +38,7 @@ for i in range(100):
         publication_date="12/02/2023, 14:01:57",
     )
 
-# give comments subcomment
+# give first 50 comments comments subcomment
 for i in range(100, 150):
     comments[str(i)] = reddit_pb2.Comment(
         id=str(i),

@@ -126,7 +126,7 @@ message VoteCommentRequest {
 
 message RetrieveTopNCommentsRequest {
     // post id to retrieve comments for
-    int32 id = 1;
+    string id = 1;
 
     // how many comments to retrieve
     int32 N = 2;

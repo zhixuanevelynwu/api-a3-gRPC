@@ -191,7 +191,7 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
         if not post:
             context.set_details("Post not found!")
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            return reddit_pb2.RetrieveTopCommentsResponse()
+            return reddit_pb2.RetrieveTopNCommentsResponse()
 
         # get all comments under this post
         all_comments_under_post = []
@@ -203,16 +203,15 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
         all_comments_under_post.sort(key=lambda x: x.score, reverse=True)
 
         # get top N comments, if there are less than N comments, return all
-        N = max(N, len(all_comments_under_post))
+        N = min(N, len(all_comments_under_post))
         top_N_comments = all_comments_under_post[:N]
-
         # indicate whether there are replies under those comments
         for comment in top_N_comments:
             for subcomment in comments.values():
                 if subcomment.parent_comment_id == comment.id:
                     comment.has_replies = True
                     break
-        return reddit_pb2.RetrieveTopCommentsResponse(comments=top_N_comments)
+        return reddit_pb2.RetrieveTopNCommentsResponse(comments=top_N_comments)
 
 
 def serve():
