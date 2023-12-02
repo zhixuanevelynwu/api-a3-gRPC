@@ -5,12 +5,12 @@ package reddit;
 
 message User {
     // a human readable id
-    string user_id = 1;
+    string id = 1;
 }
 
 message Post {
     // a human readable id
-    string post_id = 1;
+    string id = 1;
     
     // title, some text, one of video or image url
     string title = 2;
@@ -35,12 +35,12 @@ message Post {
     PostState state = 8;
 
     // a publication date
-    int64 publication_date = 9;
+    string publication_date = 9;
 }
 
 message Comment {
     // a human readable id
-    string comment_id = 1;
+    string id = 1;
 
     // the post or comment it is under
     string parent_id = 2;
@@ -59,16 +59,16 @@ message Comment {
     CommentState state = 5;
 
     // a publication date
-    int64 publication_date = 6;
+    string publication_date = 6;
 }
 
 message GetTopCommentsRequest {
     // the post to get the top comments for
-    string post_id = 1;
+    string id = 1;
 }
 
 message RetrieveTopCommentsRequest {
-    int32 postId = 1;
+    int32 id = 1;
     int32 limit = 2;
 }
 
