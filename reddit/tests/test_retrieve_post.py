@@ -31,8 +31,9 @@ class TestRetrievePostContent(unittest.TestCase):
         # retrieve the post
         response = self.servicer.RetrievePostContent(request, mock_context)
 
-        # check if the score is incremented
+        # check if the post is retrieved
         self.assertEqual(response.id, mock_post_id)
+        self.assertEqual(response.content, "Test Post Content")
 
     # upvote non-existent post
     def test_retrieve_nonexistent_post_content(self):
@@ -44,6 +45,7 @@ class TestRetrievePostContent(unittest.TestCase):
         mock_context.set_code = unittest.mock.Mock()
         mock_context.set_details = unittest.mock.Mock()
 
+        # should produce error message
         self.servicer.RetrievePostContent(request, mock_context)
         mock_context.set_details.assert_called_with("Post not found!")
         mock_context.set_code.assert_called_with(grpc.StatusCode.NOT_FOUND)
