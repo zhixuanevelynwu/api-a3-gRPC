@@ -147,12 +147,6 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
         comments[comment_id] = new_comment
         return new_comment
 
-    """
-    rpc UpvoteComment(Comment) returns (Comment);
-    rpc DownvoteComment(Comment) returns (Comment);
-    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
-    """
-
     # upvate an existing comment
     def UpvoteComment(self, request, context):
         comment_id = request.id
@@ -263,6 +257,7 @@ def serve():
     reddit_pb2_grpc.add_RedditServiceServicer_to_server(RedditServicer(), server)
     server.add_insecure_port("[::]:50051")
     server.start()
+    print("Server started at [::]:50051")
     server.wait_for_termination()
 
 
