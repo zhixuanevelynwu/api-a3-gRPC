@@ -10,6 +10,7 @@ from db import posts, comments
 
 class RedditServicer(reddit_pb2_grpc.RedditService):
     posts_lock = threading.Lock()
+    comments_lock = threading.Lock()
 
     # create a new post
     def CreatePost(self, request, context):
@@ -147,9 +148,36 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
         return new_comment
 
     """
+    rpc UpvoteComment(Comment) returns (Comment);
+    rpc DownvoteComment(Comment) returns (Comment);
     rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
     """
-    # retrieve
+
+    # upvate an existing comment
+    def UpvoteComment(self, request, context):
+        comment_id = request.id
+        with self.comments_lock:
+            comment = comments.get(comment_id, None)
+            if comment:
+                comment.score += 1
+                return comment
+            else:
+                context.set_details("Comment not found!")
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                return reddit_pb2.Comment()
+
+    # downvote an existing comment
+    def DownvoteComment(self, request, context):
+        comment_id = request.id
+        with self.comments_lock:
+            comment = comments.get(comment_id, None)
+            if comment:
+                comment.score -= 1
+                return comment
+            else:
+                context.set_details("Comment not found!")
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                return reddit_pb2.Comment()
 
 
 def serve():
