@@ -33,14 +33,13 @@ class TestRetrieveTopNComments(unittest.TestCase):
         response = self.servicer.RetrieveTopNComments(request, mock_context)
 
         # check if there are N comments as required
-        self.assertEqual(len(response.comments), 10)
+        self.assertEqual(len(response.comments_with_has_replies), 10)
 
         # check if sorted in descending order by score
         current_min_score = float("inf")
-        for comment in response.comments:
-            self.assertTrue(comment.score <= current_min_score)
-            current_min_score = comment.score
-            assert comment.has_replies == True
+        for c in response.comments_with_has_replies:
+            self.assertTrue(c.comment.score <= current_min_score)
+            current_min_score = c.comment.score
 
     def test_retrieve_more_comments_than_exist(self):
         # create mock request
@@ -55,13 +54,13 @@ class TestRetrieveTopNComments(unittest.TestCase):
         response = self.servicer.RetrieveTopNComments(request, mock_context)
 
         # check if there are N comments as required
-        self.assertEqual(len(response.comments), 100)
+        self.assertEqual(len(response.comments_with_has_replies), 100)
 
         # check if sorted in descending order by score
         current_min_score = float("inf")
-        for comment in response.comments:
-            self.assertTrue(comment.score <= current_min_score)
-            current_min_score = comment.score
+        for c in response.comments_with_has_replies:
+            self.assertTrue(c.comment.score <= current_min_score)
+            current_min_score = c.comment.score
 
     # upvote non-existent post
     def test_retrieve_nonexistent_post_content(self):

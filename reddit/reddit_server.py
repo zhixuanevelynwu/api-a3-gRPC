@@ -204,14 +204,53 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
 
         # get top N comments, if there are less than N comments, return all
         N = min(N, len(all_comments_under_post))
-        top_N_comments = all_comments_under_post[:N]
+        top_N_comments_with_has_replies = []
         # indicate whether there are replies under those comments
-        for comment in top_N_comments:
+        for comment in all_comments_under_post[:N]:
             for subcomment in comments.values():
+                has_replies = False
                 if subcomment.parent_comment_id == comment.id:
-                    comment.has_replies = True
+                    has_replies = True
                     break
-        return reddit_pb2.RetrieveTopNCommentsResponse(comments=top_N_comments)
+            top_N_comments_with_has_replies.append(
+                reddit_pb2.CommentWithHasReplies(
+                    comment=comment, has_replies=has_replies
+                )
+            )
+        return reddit_pb2.RetrieveTopNCommentsResponse(
+            comments_with_has_replies=top_N_comments_with_has_replies
+        )
+
+    def ExpandCommentBranch(self, request, context):
+        parent_comment_id = request.id
+        N = request.N
+
+        # find the parent comment, must exist
+        parent_comment = comments.get(parent_comment_id, None)
+        if not parent_comment:
+            context.set_details("Parent comment not found!")
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            return reddit_pb2.ExpandCommentBranchResponse()
+
+        # find all (direct) replies to the parent comment
+        replies = [
+            c for c in comments.values() if c.parent_comment_id == parent_comment_id
+        ]
+
+        # sort them in desc order by score
+        replies.sort(key=lambda c: c.score, reverse=True)
+        top_N_replies = replies[:N]
+
+        # For each top reply, find and sort its replies
+        for reply in top_N_replies:
+            sub_replies = [
+                c for c in comments.values() if c.parent_comment_id == reply.id
+            ]
+            sub_replies.sort(key=lambda c: c.score, reverse=True)
+            top_N_sub_replies = sub_replies[:N]
+            reply.replies.extend(top_N_sub_replies)
+
+        return reddit_pb2.ExpandCommentBranchResponse(comments=top_direct_replies)
 
 
 def serve():

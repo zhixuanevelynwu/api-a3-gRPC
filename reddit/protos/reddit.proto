@@ -66,11 +66,9 @@ message Comment {
 
     // a publication date
     string publication_date = 8;
-
-    bool has_replies = 9;
 }
 
-
+// defines API capabilities, as required
 service RedditService {
     rpc CreatePost(CreatePostRequest) returns (Post);
     rpc UpvotePost(VotePostRequest) returns (Post);
@@ -80,6 +78,7 @@ service RedditService {
     rpc UpvoteComment(VoteCommentRequest) returns (Comment);
     rpc DownvoteComment(VoteCommentRequest) returns (Comment);
     rpc RetrieveTopNComments(RetrieveTopNCommentsRequest) returns (RetrieveTopNCommentsResponse);
+    rpc ExpandCommentBranch(ExpandCommentBranchRequest) returns (ExpandCommentBranchResponse);
 }
 
 message CreatePostRequest {
@@ -132,11 +131,27 @@ message RetrieveTopNCommentsRequest {
     int32 N = 2;
 }
 
-message RetrieveTopNCommentsResponse {
-    repeated Comment comments = 1;
+message CommentWithHasReplies {
+    Comment comment = 1;
+    bool has_replies = 2;
 }
 
+message RetrieveTopNCommentsResponse {
+    repeated CommentWithHasReplies comments_with_has_replies = 1;
+}
 
+message ExpandCommentBranchRequest {
+    // comment id to expand
+    string id = 1;
+
+    // how many comments to retrieve
+    int32 N = 2; 
+}
+
+message ExpandCommentBranchResponse {
+    // top n comments with top n replies
+    repeated Comment comments = 1;
+}
 
 
 

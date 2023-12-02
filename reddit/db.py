@@ -38,14 +38,25 @@ for i in range(100):
         publication_date="12/02/2023, 14:01:57",
     )
 
-# give first 50 comments comments subcomment
+# give comment0 50 replies
 for i in range(100, 150):
     comments[str(i)] = reddit_pb2.Comment(
         id=str(i),
         user_id=f"user{i}",
-        parent_comment_id=str(i - 100),
+        parent_comment_id="0",
         content=f"Dummy Comment Content {i}",
         score=100 - i,
         state=reddit_pb2.Comment.CommentState.NORMAL,
         publication_date="12/02/2023, 14:01:58",
     )
+    # give first 5 of these comments 1 reply each
+    if i < 105:
+        comments[str(i + 50)] = reddit_pb2.Comment(
+            id=str(i + 50),
+            user_id=f"user{i}",
+            parent_comment_id=str(i),
+            content=f"Dummy Comment Content {i}",
+            score=100 - i,
+            state=reddit_pb2.Comment.CommentState.NORMAL,
+            publication_date="12/02/2023, 14:01:58",
+        )
