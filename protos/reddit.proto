@@ -42,8 +42,8 @@ message Comment {
     // a human readable id
     string comment_id = 1;
 
-    // the post it is under
-    string post_id = 2;
+    // the post or comment it is under
+    string parent_id = 2;
 
     // must have an author
     string user_id = 3;
@@ -61,6 +61,34 @@ message Comment {
     // a publication date
     int64 publication_date = 6;
 }
+
+message GetTopCommentsRequest {
+    // the post to get the top comments for
+    string post_id = 1;
+}
+
+message RetrieveTopCommentsRequest {
+    int32 postId = 1;
+    int32 limit = 2;
+}
+
+message RetrieveTopCommentsResponse {
+    repeated Comment comments = 1;
+}
+
+
+service RedditService {
+    rpc CreatePost(Post) returns (Post);
+    rpc UpvotePost(Post) returns (Post);
+    rpc DownvotePost(Post) returns (Post);
+    rpc RetrievePostContent(Post) returns (Post);
+    rpc CreateComment(Comment) returns (Comment);
+    rpc UpvoteComment(Comment) returns (Comment);
+    rpc DownvoteComment(Comment) returns (Comment);
+    rpc RetrieveTopComments(RetrieveTopCommentsRequest) returns (RetrieveTopCommentsResponse);
+}
+
+
 
 
 
