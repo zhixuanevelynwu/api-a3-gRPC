@@ -1,0 +1,68 @@
+
+syntax = "proto3";
+
+package reddit;
+
+message User {
+    // a human readable id
+    string user_id = 1;
+}
+
+message Post {
+    // a human readable id
+    string post_id = 1;
+    
+    // title, some text, one of video or image url
+    string title = 2;
+    string content = 3;
+    oneof media {
+        string image_url = 4;
+        string video_url = 5;
+    }
+
+    // optional author
+    optional string user_id = 6;
+
+    // a score, can be negative
+    int32 score = 7;
+
+    // a state: normal, locked, hidden
+    enum PostState {
+        NORMAL = 0;
+        LOCKED = 1;
+        HIDDEN = 2;
+    }
+    PostState state = 8;
+
+    // a publication date
+    int64 publication_date = 9;
+}
+
+message Comment {
+    // a human readable id
+    string comment_id = 1;
+
+    // the post it is under
+    string post_id = 2;
+
+    // must have an author
+    string user_id = 3;
+
+    // have a score
+    int32 score = 4;
+
+    // can be normal or hidden
+    enum CommentState {
+        NORMAL = 0;
+        HIDDEN = 1;
+    }
+    CommentState state = 5;
+
+    // a publication date
+    int64 publication_date = 6;
+}
+
+
+
+
+
