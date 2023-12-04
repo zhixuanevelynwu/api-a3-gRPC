@@ -4,7 +4,7 @@ posts, comments = {}, {}
 
 # populate posts and comments
 for i in range(100):
-    # create a post
+    # create a post with id i
     posts[str(i)] = reddit_pb2.Post(
         id=str(i),
         title=f"Dummy Post Title {i}",
@@ -14,7 +14,7 @@ for i in range(100):
         score=i,
         publication_date="12/02/2023, 14:01:56",
     )
-    # for testing purpose, give post0 100 comments
+    # for testing purpose, give post '0' 100 comments
     comments[str(i)] = reddit_pb2.Comment(
         id=str(i),
         user_id=f"user{i}",
@@ -25,8 +25,8 @@ for i in range(100):
         publication_date="12/02/2023, 14:01:57",
     )
 
-# give comment0 50 replies
 for i in range(100, 150):
+    # give comment0 50 replies
     comments[str(i)] = reddit_pb2.Comment(
         id=str(i),
         user_id=f"user{i}",
@@ -57,4 +57,14 @@ posts['0011'] = reddit_pb2.Post(
         state=reddit_pb2.Post.PostState.NORMAL,
         image_url="./dummy.jpg",
         publication_date="12/02/2023, 14:01:56",
+    )
+
+comments['0011'] = reddit_pb2.Comment(
+        id='0011',
+        user_id=f"user0011",
+        parent_comment_id='0011',
+        content=f"Dummy Comment Content {i}",
+        score=100,
+        state=reddit_pb2.Comment.CommentState.NORMAL,
+        publication_date="12/02/2023, 14:01:58",
     )

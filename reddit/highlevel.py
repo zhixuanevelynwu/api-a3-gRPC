@@ -15,7 +15,7 @@ def top_reply_under_top_comment(client, post_id):
     
     # retrieve the most upvoted comment under this post
     comments_response = client.retrieve_top_n_comments(post_id, 1)
-    if not comments_response.comments_with_has_replies:
+    if not comments_response or not comments_response.comments_with_has_replies:
         return None
 
     # get the most upvoted reply
