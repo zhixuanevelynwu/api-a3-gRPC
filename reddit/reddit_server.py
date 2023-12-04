@@ -173,8 +173,7 @@ class RedditServicer(reddit_pb2_grpc.RedditService):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return reddit_pb2.Comment()
 
-    # Retrieving a list of N most upvoted comments under a post, where N is a parameter to the call. The
-    # returned result should indicate whether there are replies under those comments.
+    # Retrieving a list of N most upvoted comments under a post, where N is a parameter to the call
     def RetrieveTopNComments(self, request, context):
         # get data from request
         post_id = request.id
